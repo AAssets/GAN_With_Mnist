@@ -1,3 +1,4 @@
+import os
 import importlib
 
 import torch
@@ -7,6 +8,8 @@ import torch.nn as nn
 import argparse
 import swanlab
 
+
+from datetime import datetime
 
 
 
@@ -21,6 +24,14 @@ def main(args):
         )
 
     use_gpu = torch.cuda.is_available()
+
+    # 生成文件夹
+    # 获取当前时间
+    current_time = datetime.now()
+    # 格式化时间为字符串，例如：2024-02-23_15-30-45
+    timestamp = current_time.strftime("%Y-%m-%d_%H-%M-%S")
+    OUTPUT_PATH=f'./outputs/{args.model}_{timestamp}/'
+    os.makedirs(OUTPUT_PATH, exist_ok=True)
 
     # Data setting
     dataset = torchvision.datasets.MNIST("./data/mnist_data", train=True, download=True,
@@ -94,9 +105,9 @@ def main(args):
             if i % 50 == 0:
                 print(f"step:{len(dataloader)*epoch+i}, recons_loss:{recons_loss.item()}, g_loss:{g_loss.item()}, d_loss:{d_loss.item()}, real_loss:{real_loss.item()}, fake_loss:{fake_loss.item()}")
 
-            if i % 400 == 0:
-                image = pred_images[:16].data
-                torchvision.utils.save_image(image, f'C:\LearningGit\Learning Project\GAN\Conv test train 1\image_{len(dataloader)*epoch+i}.png', nrow=4)
+        if epoch % 10 == 0:
+            image = pred_images[:16].data
+            torchvision.utils.save_image(image,os.path.join(OUTPUT_PATH, f'image_{len(dataloader)*epoch+i}.png'), nrow=4)
 
         swanlab.log({"g loss": g_loss / 100},iteration_num)
         swanlab.log({"d loss": d_loss / 100},iteration_num)
