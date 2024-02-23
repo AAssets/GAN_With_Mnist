@@ -42,7 +42,7 @@ class Discriminator(nn.Module):
         super(Discriminator, self).__init__()
 
         self.model = nn.Sequential(
-            nn.Linear(np.prod(args.image_size, dtype=np.int32), 512),
+            nn.Linear(np.prod(args.image_size*args.image_size, dtype=np.int32), 512),
             torch.nn.GELU(),
             nn.Linear(512, 256),
             torch.nn.GELU(),

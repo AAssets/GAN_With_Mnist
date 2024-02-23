@@ -26,7 +26,7 @@ def main(args):
     dataset = torchvision.datasets.MNIST("./data/mnist_data", train=True, download=True,
                                         transform=torchvision.transforms.Compose(
                                             [
-                                                torchvision.transforms.Resize(64),
+                                                torchvision.transforms.Resize(args.image_size),
                                                 torchvision.transforms.ToTensor(),
                                             ]
                                                                                 )
@@ -45,10 +45,9 @@ def main(args):
     d_optimizer = torch.optim.Adam(discriminator.parameters(), lr=args.learning_rate, betas=(0.4, 0.8), weight_decay=0.0001)
 
     loss_fn = nn.BCELoss()
-    labels_one = torch.ones(args.batch_size, 1)
-    labels_one = labels_one.squeeze(1)
-    labels_zero = torch.zeros(args.batch_size, 1)
-    labels_zero = labels_one.squeeze(0)
+    labels_one = torch.ones(args.batch_size,1)
+    labels_zero = torch.zeros(args.batch_size,1)
+
 
     if use_gpu:
         print("use gpu for training")
@@ -66,7 +65,7 @@ def main(args):
             gt_images, _ = mini_batch
 
 
-            z = torch.randn(args.batch_size, args.z_dimention, 1, 1,)
+            z = torch.randn(args.batch_size, args.latent_size)
 
             if use_gpu:
                 gt_images = gt_images.to("cuda")
